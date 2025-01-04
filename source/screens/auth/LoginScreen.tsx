@@ -9,8 +9,8 @@ import { Colors } from '@/constants/Colors';
 
 const LoginScreen: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('demo@veza.com.ar');
+  const [password, setPassword] = useState('admin');
   const [loading, setLoading] = useState(false); // Para manejar el estado de carga
   const [error, setError] = useState<string | null>(null); // Para manejar errores
 
