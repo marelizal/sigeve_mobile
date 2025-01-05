@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, ImageBackground,Image } from 'react-native';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../redux/store';
-import { fetchToken } from '../../redux/slices/authSlice'; 
+import { fetchToken } from '../../redux/slices/auth.slice'; 
 import backgroundImage from '@/assets/background.png';
 import logoImage from '@/assets/logo.png';
 import { Colors } from '@/constants/Colors';
+import useFetchData from '@/hooks/useFetchData';
 
 const LoginScreen: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -13,6 +14,8 @@ const LoginScreen: React.FC = () => {
   const [password, setPassword] = useState('admin');
   const [loading, setLoading] = useState(false); // Para manejar el estado de carga
   const [error, setError] = useState<string | null>(null); // Para manejar errores
+
+
 
   const handleLogin = async () => {
     if (username && password) {

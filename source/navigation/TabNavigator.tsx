@@ -1,8 +1,8 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, DrawerActions } from '@react-navigation/native'; // Importamos el hook de navegación y DrawerActions
-import ClientsScreen from 'source/screens/tabs/ClientsScreen';
+import { useNavigation, DrawerActions } from '@react-navigation/native'; 
+import ClientsScreen from '@/screens/tabs/CustomerScreen';
 import ProductsScreen from 'source/screens/tabs/ProductsScreen';
 import RoutesScreen from 'source/screens/tabs/RoutesScreen';
 import CartScreen from 'source/screens/tabs/CartScreen';
@@ -12,7 +12,7 @@ import { useDispatch } from 'react-redux';
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
-  const navigation = useNavigation(); // Usamos el hook para obtener la navegación
+  const navigation = useNavigation();
   const dispatch = useDispatch()
 
   // Función que maneja el cierre de sesión 
@@ -67,7 +67,7 @@ const TabNavigator = () => {
             size={30}
             color={Colors.white} // Color del ícono
             style={{ marginLeft: 15 }}
-            onPress={() => navigation.dispatch(DrawerActions.openDrawer())} // Abre el drawer cuando se toca
+            onPress={() => navigation.dispatch(DrawerActions.openDrawer())} 
           />
         ),
         headerRight: () => (

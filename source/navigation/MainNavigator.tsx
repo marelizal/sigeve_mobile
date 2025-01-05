@@ -10,6 +10,7 @@ import { startLocationTracking, stopLocationTracking } from '../services/Locatio
 import { Colors } from 'source/constants/Colors';
 import { useDispatch } from 'react-redux';
 import StockScreen from '@/screens/drawer/StockScreen';
+import useFetchData from '@/hooks/useFetchData';
 
 const Drawer = createDrawerNavigator();
 
@@ -35,6 +36,7 @@ const MainNavigator = () => {
     };
 
     initLocationTracking();
+  
 
     return () => {
       if (isLocationTracking) {
