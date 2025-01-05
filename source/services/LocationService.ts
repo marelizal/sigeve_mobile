@@ -34,7 +34,7 @@ const sendLocationToBackend = async (location: Location.LocationObject): Promise
 
   // Crear los parámetros conforme a la interfaz OsmAnd
   const params = {
-    deviceId: deviceId,  // ID del dispositivo
+    deviceId: "4bfa8ac2e615ffe7",  // ID del dispositivo
     lat: location.coords.latitude,
     lon: location.coords.longitude,
     timestamp,
@@ -47,7 +47,7 @@ const sendLocationToBackend = async (location: Location.LocationObject): Promise
     charge: charge ? 'charging' : 'not charging',  // Estado de carga como 'charging' o 'not charging'
     driverUniqueId,
     valid: false,  // Establecemos 'false' como valor predeterminado
-    id: deviceId,  // El ID del dispositivo es igual a deviceId
+    id: "4bfa8ac2e615ffe7",  // El ID del dispositivo es igual a deviceId
   };
 
   const apiUrl = 'http://demo4.traccar.org:5055';

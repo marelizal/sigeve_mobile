@@ -27,7 +27,7 @@ const CustomersScreen: React.FC = () => {
   useEffect(() => {
     // Cuando los clientes están disponibles, actualizamos el estado de carga y los clientes filtrados
     if (customers.length > 0) {
-      setFilteredCustomers(availableForVisit);
+      setFilteredCustomers(customers);  // Mostrar todos los clientes en la vista "Todos"
       setLoading(false);
     }
   }, [customers]);  // Se ejecuta cada vez que los clientes cambian
@@ -52,7 +52,7 @@ const CustomersScreen: React.FC = () => {
           <Text>No hay clientes para mostrar en el mapa</Text>
         </View>
       ) : (
-        <Map clients={filteredCustomers} />
+        <Map clients={availableForVisit} /> 
       )
     ),
     customers: () => (
@@ -132,4 +132,3 @@ const styles = StyleSheet.create({
 });
 
 export default CustomersScreen;
-
