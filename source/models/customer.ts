@@ -18,7 +18,7 @@ export interface Customer {
     salesman_id:           number;
     zone_id:               number;
     active:                boolean;
-    id:                    number;
+    id:                    string;
     zone:                  Zone;
     deleted:               boolean;
     created_at:            Date;

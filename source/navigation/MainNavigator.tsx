@@ -10,14 +10,15 @@ import { startLocationTracking, stopLocationTracking } from '../services/Locatio
 import { Colors } from 'source/constants/Colors';
 import { useDispatch } from 'react-redux';
 import StockScreen from '@/screens/drawer/StockScreen';
-import useFetchData from '@/hooks/useFetchData';
+import RoadmapDetailScreen from '@/screens/drawer/RoadmapDetailScreen';
 
 const Drawer = createDrawerNavigator();
 
 const MainNavigator = () => {
   const [isLocationTracking, setIsLocationTracking] = useState(false);
-
-  const dispatch = useDispatch()
+  const [showRoadmap, setShowRoadmap] = useState(false); // Estado para controlar la visibilidad de "Ruta"
+  
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const initLocationTracking = async () => {
@@ -36,7 +37,6 @@ const MainNavigator = () => {
     };
 
     initLocationTracking();
-  
 
     return () => {
       if (isLocationTracking) {
@@ -45,9 +45,7 @@ const MainNavigator = () => {
     };
   }, []);
 
-  // Función que maneja el cierre de sesión 
   const handleLogout = () => {
-    // Lógica para cerrar sesión
     console.log('Cerrando sesión...');
     dispatch({ type: 'auth/logout' });
   };
@@ -57,11 +55,11 @@ const MainNavigator = () => {
     headerTintColor: Colors.white,
     headerRight: () => (
       <Ionicons
-        name="log-out" // Icono para cerrar sesión
+        name="log-out"
         size={30}
-        color={Colors.white} // Color del ícono
-        style={{ marginRight: 15 }} // Margen a la derecha
-        onPress={handleLogout} // Llama a la función de cerrar sesión
+        color={Colors.white}
+        style={{ marginRight: 15 }}
+        onPress={handleLogout}
       />
     ),
   };
@@ -72,16 +70,14 @@ const MainNavigator = () => {
         drawerStyle: { backgroundColor: Colors.background },
         drawerActiveTintColor: Colors.textSelection,
         drawerInactiveTintColor: '#ffffff',
-        headerShown: true, // Este es el valor predeterminado para el resto de las pantallas
+        headerShown: true,
       }}
     >
-      {/* Pantalla de Inicio sin encabezado */}
       <Drawer.Screen
         name="Inicio"
         component={TabNavigator}
-        options={{ headerShown: false }} // Deshabilitar el encabezado para "Inicio"
+        options={{ headerShown: false }}
       />
-      {/* Otras pantallas con encabezado y el ícono de "Cerrar sesión" */}
       <Drawer.Screen
         name="Tu actividad"
         component={ReceiptsScreen}
@@ -96,6 +92,16 @@ const MainNavigator = () => {
         name="Configuraciones"
         component={SettingsScreen}
         options={screenOptions}
+      />
+      
+      {/* "Ruta" está oculta en el Drawer pero aún es accesible */}
+      <Drawer.Screen
+        name="Ruta"
+        component={RoadmapDetailScreen}
+        options={{
+          ...screenOptions,
+          drawerItemStyle: { display: 'none' }, 
+        }}
       />
     </Drawer.Navigator>
   );

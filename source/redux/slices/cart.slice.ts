@@ -41,9 +41,11 @@ const cartSlice = createSlice({
     setSelectedClient: (state, action: PayloadAction<number | null>) => {
       state.selectedClientId = action.payload;
     },
+    clearCart: (state) => {
+      state.items = [];
+    },
   },
 });
 
-export const { addToCart, removeFromCart, setSelectedClient } = cartSlice.actions;
+export const { addToCart, removeFromCart, setSelectedClient, clearCart } = cartSlice.actions;
 export default cartSlice.reducer;
-

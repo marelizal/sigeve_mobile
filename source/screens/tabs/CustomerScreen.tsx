@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, FlatList, TextInput, StyleSheet } from 'react-native';
+import { View, Text, ActivityIndicator, FlatList, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import TabsView from '@/components/TabsView';
 import ClientCard from '@/components/Cards/Customer';
 import { isAvailableForVisit } from '@/utils/isAvailableForVisit';
-import Map from '@/components/Map';
-import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '@/constants/Colors';
+import Header from '@/components/Header';
+
+
 
 const CustomersScreen: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -17,9 +17,8 @@ const CustomersScreen: React.FC = () => {
   // Obtén los clientes desde el estado de Redux
   const { customers } = useSelector((state: RootState) => state.customers);
   const availableForVisit = customers.filter(client => isAvailableForVisit(client.days_off_week));
-
+  const selectedCustomerId = useSelector((state: RootState) => state.customers.selectedCustomerId);
   const routes = [
-    { key: 'map', title: 'Mapa' },
     { key: 'customers', title: 'Todos' },
     { key: 'today', title: 'Visitar hoy' },
   ];
@@ -41,20 +40,7 @@ const CustomersScreen: React.FC = () => {
   }, [searchQuery, customers]);
 
   const renderScene = {
-    map: () => (
-      loading ? (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" color="#0000ff" />
-          <Text>Cargando mapa...</Text>
-        </View>
-      ) : customers.length === 0 ? (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text>No hay clientes para mostrar en el mapa</Text>
-        </View>
-      ) : (
-        <Map clients={availableForVisit} /> 
-      )
-    ),
+ 
     customers: () => (
       <View style={{ padding: 10 }}>
         {loading ? (
@@ -107,6 +93,9 @@ const CustomersScreen: React.FC = () => {
           onChangeText={setSearchQuery}
         />
       </View> */}
+        {selectedCustomerId && (
+              <Header />
+            )}
       <TabsView routes={routes} renderScene={renderScene} />
     </View>
   );

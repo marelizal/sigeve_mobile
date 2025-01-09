@@ -1,4 +1,5 @@
 import ProductCard from '@/components/Cards/ProductCard';
+import Header from '@/components/Header';
 import { setSearchQuery } from '@/redux/slices/product.slice';
 import { RootState } from '@/redux/store';
 import React from 'react';
@@ -6,27 +7,32 @@ import { View, FlatList, TextInput, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 const ProductsScreen: React.FC = () => {
- const dispatch = useDispatch()
+  const dispatch = useDispatch()
   const { products, searchQuery } = useSelector((state: RootState) => state.products);
-
+  const selectedCustomerId = useSelector((state: RootState) => state.customers.selectedCustomerId);
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Buscar productos..."
-        value={searchQuery}
-        onChangeText={(text) => dispatch(setSearchQuery(text))}
-      />
-      <FlatList
-        data={filteredProducts}
-        renderItem={({ item }) => <ProductCard product={item} />}
-        keyExtractor={(item) => item.id.toString()}
-      />
-    </View>
+    <>
+      {selectedCustomerId && (
+        <Header />
+      )}
+      <View style={styles.container}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Buscar productos..."
+          value={searchQuery}
+          onChangeText={(text) => dispatch(setSearchQuery(text))}
+        />
+        <FlatList
+          data={filteredProducts}
+          renderItem={({ item }) => <ProductCard product={item} />}
+          keyExtractor={(item) => item.id.toString()}
+        />
+      </View>
+    </>
   );
 };
 

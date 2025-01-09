@@ -6,7 +6,7 @@ import { fetchToken } from '../../redux/slices/auth.slice';
 import backgroundImage from '@/assets/background.png';
 import logoImage from '@/assets/logo.png';
 import { Colors } from '@/constants/Colors';
-import useFetchData from '@/hooks/useFetchData';
+
 
 const LoginScreen: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();

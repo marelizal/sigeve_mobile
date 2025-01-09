@@ -8,7 +8,8 @@ import customerReducer from './slices/customer.slice';
 import productReducer from './slices/product.slice';
 import priceListReducer from './slices/pricelist.slice';
 import cartReducer from './slices/cart.slice';
-
+import roadmapReducer from './slices/roadmap.slice';
+import logsReducer from './slices/logs.slice';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
@@ -22,6 +23,8 @@ const rootReducer = combineReducers({
   products: productReducer,
   priceList: priceListReducer,
   cart: cartReducer,
+  roadmap: roadmapReducer,
+  logs: logsReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

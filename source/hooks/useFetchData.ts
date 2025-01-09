@@ -15,7 +15,7 @@ const useFetchData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Ejecutamos los servicios
+        // Ejecutam los servicios
         const customers = await getCustomers('/customers');
         const products = await getProducts('/products');
         const priceLists = await getPriceLists('/pricelists');
@@ -26,13 +26,12 @@ const useFetchData = () => {
         dispatch(setPriceLists(priceLists));
       } catch (error) {
         console.error('Error fetching data:', error);
-        // Aquí podrías despachar una acción para manejar el error en el estado global
-        // Por ejemplo: dispatch(setError('Error al cargar los datos'));
+       
       }
     };
 
     fetchData();
-  }, [dispatch]); // Se ejecuta una vez cuando el componente se monta
+  }, [dispatch]);
 };
 
 export default useFetchData;

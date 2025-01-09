@@ -4,7 +4,7 @@ import { Customer } from '@/models/customer';
 
 interface CustomerState {
   customers: Customer[];
-  selectedCustomerId: number | null;
+  selectedCustomerId: string | null;
 }
 
 const initialState: CustomerState = {
@@ -19,7 +19,7 @@ const customerSlice = createSlice({
     setCustomers: (state, action: PayloadAction<Customer[]>) => {
       state.customers = action.payload;
     },
-    setSelectedCustomer: (state, action: PayloadAction<number | null>) => {
+    setSelectedCustomer: (state, action: PayloadAction<string | null>) => {
       state.selectedCustomerId = action.payload;
     },
   },

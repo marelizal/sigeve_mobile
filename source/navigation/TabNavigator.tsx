@@ -1,13 +1,14 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, DrawerActions } from '@react-navigation/native'; 
+import { useNavigation, DrawerActions } from '@react-navigation/native';
 import ClientsScreen from '@/screens/tabs/CustomerScreen';
 import ProductsScreen from 'source/screens/tabs/ProductsScreen';
 import RoutesScreen from 'source/screens/tabs/RoutesScreen';
 import CartScreen from 'source/screens/tabs/CartScreen';
 import { Colors } from 'source/constants/Colors';
 import { useDispatch } from 'react-redux';
+import RoadmapDetailScreen from '@/screens/drawer/RoadmapDetailScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -37,7 +38,7 @@ const TabNavigator = () => {
             case 'Productos':
               iconName = focused ? 'cube' : 'cube-outline';
               break;
-            case 'Hoja de ruta':
+            case 'Hojas de ruta':
               iconName = focused ? 'map' : 'map-outline';
               break;
             case 'Carrito':
@@ -67,7 +68,7 @@ const TabNavigator = () => {
             size={30}
             color={Colors.white} // Color del ícono
             style={{ marginLeft: 15 }}
-            onPress={() => navigation.dispatch(DrawerActions.openDrawer())} 
+            onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
           />
         ),
         headerRight: () => (
@@ -82,7 +83,7 @@ const TabNavigator = () => {
       })}
     >
       {/* Definición de las pestañas con las pantallas correspondientes */}
-      <Tab.Screen name="Hoja de ruta" component={RoutesScreen} options={{ headerShown: true }} />
+      <Tab.Screen name="Hojas de ruta" component={RoutesScreen} options={{ headerShown: true }} />
       <Tab.Screen name="Clientes" component={ClientsScreen} options={{ headerShown: true }} />
       <Tab.Screen name="Productos" component={ProductsScreen} options={{ headerShown: true }} />
       {/* <Tab.Screen name="Carrito" component={CartScreen} options={{ headerShown: true }} /> */}
