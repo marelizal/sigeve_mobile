@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import TabNavigator from './TabNavigator';
 import SettingsScreen from '../screens/drawer/SettingsScreen';
 import ReceiptsScreen from '../screens/drawer/ReceiptsScreen';
-import { startLocationTracking, stopLocationTracking } from '../services/LocationService';
+import { startLocationTracking, stopLocationTracking } from '../services/location.service';
 
 import { Colors } from 'source/constants/Colors';
 import { useDispatch } from 'react-redux';

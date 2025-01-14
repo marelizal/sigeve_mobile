@@ -1,6 +1,6 @@
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
-import * as Battery from 'expo-battery';  // Para obtener el nivel de batería
+import * as Battery from 'expo-battery'; // Para obtener el nivel de batería
 import axios from 'axios';
 import * as Application from 'expo-application';
 
@@ -9,19 +9,19 @@ const LOCATION_TASK_NAME = 'background-location-task';
 // Función para obtener el deviceId del dispositivo
 const getDeviceId = async (): Promise<string> => {
   const androidId = await Application.getAndroidId();
-  return androidId || 'default-device-id';  // Usamos un valor por defecto si no se obtiene el ID
-}
+  return androidId || 'default-device-id'; // Usamos un valor por defecto si no se obtiene el ID
+};
 
 // Función para obtener el nivel de batería y el estado de carga
 const getBatteryInfo = async () => {
   const batteryLevel = await Battery.getBatteryLevelAsync();
   const chargeStatus = await Battery.getBatteryStateAsync();
-  
+
   return {
-    batt: Math.floor(batteryLevel * 100),  // Convertimos el nivel de batería en porcentaje
-    charge: chargeStatus === Battery.BatteryState.CHARGING,  // Verificamos si el dispositivo está cargando
+    batt: Math.floor(batteryLevel * 100), // Convertimos el nivel de batería en porcentaje
+    charge: chargeStatus === Battery.BatteryState.CHARGING, // Verificamos si el dispositivo está cargando
   };
-}
+};
 
 // Función para enviar la ubicación a la API de OsmAnd
 const sendLocationToBackend = async (location: Location.LocationObject): Promise<void> => {
@@ -34,20 +34,20 @@ const sendLocationToBackend = async (location: Location.LocationObject): Promise
 
   // Crear los parámetros conforme a la interfaz OsmAnd
   const params = {
-    deviceId: deviceId,  // ID del dispositivo
+    deviceId: deviceId, // ID del dispositivo
     lat: location.coords.latitude,
     lon: location.coords.longitude,
     timestamp,
-    speed: location.coords.speed ?? 0,  // Usamos 0 si no hay valor de velocidad
-    bearing: location.coords.heading ?? 0,  // Usamos 0 si no hay valor de dirección
-    altitude: location.coords.altitude ?? 0,  // Usamos 0 si no hay valor de altitud
-    accuracy: location.coords.accuracy ?? 0,  // Usamos 0 si no hay precisión
-    hdop: 1.0,  //  calcular esto en función de la precisión, pero aquí lo dejamos en 1.0 por defecto
+    speed: location.coords.speed ?? 0, // Usamos 0 si no hay valor de velocidad
+    bearing: location.coords.heading ?? 0, // Usamos 0 si no hay valor de dirección
+    altitude: location.coords.altitude ?? 0, // Usamos 0 si no hay valor de altitud
+    accuracy: location.coords.accuracy ?? 0, // Usamos 0 si no hay precisión
+    hdop: 1.0, // Calcular esto en función de la precisión, pero aquí lo dejamos en 1.0 por defecto
     batt,
-    charge: charge ? 'charging' : 'not charging',  // Estado de carga como 'charging' o 'not charging'
+    charge: charge ? 'charging' : 'not charging', // Estado de carga como 'charging' o 'not charging'
     driverUniqueId,
-    valid: false,  // Establecemos 'false' como valor predeterminado
-    id: deviceId,  // El ID del dispositivo es igual a deviceId
+    valid: false, // Establecemos 'false' como valor predeterminado
+    id: deviceId, // El ID del dispositivo es igual a deviceId
   };
 
   const apiUrl = 'http://demo4.traccar.org:5055';
@@ -61,13 +61,9 @@ const sendLocationToBackend = async (location: Location.LocationObject): Promise
   console.log(fullUrl);
   console.log('----');
 
-  try {
-    // Enviar la ubicación a la API de OsmAnd usando axios
-    await axios.get(fullUrl);
-    console.log('---- Ubicación enviada correctamente a OsmAnd');
-  } catch (error) {
-    console.error('---- Error al enviar la ubicación a OsmAnd:', error);
-  }
+  // Enviar la ubicación a la API de OsmAnd usando axios
+  await axios.get(fullUrl);
+  console.log('---- Ubicación enviada correctamente a OsmAnd');
 };
 
 export const startLocationTracking = async () => {
@@ -88,8 +84,7 @@ export const startLocationTracking = async () => {
     console.log('---- La tarea no está definida, definiéndola ahora.');
     TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
       if (error) {
-        console.error('---- Error en la tarea de ubicación en segundo plano:', error);
-        return;
+        throw new Error(`---- Error en la tarea de ubicación en segundo plano: ${error.message}`);
       }
       if (data) {
         const { locations } = data as { locations: Location.LocationObject[] };
@@ -108,10 +103,10 @@ export const startLocationTracking = async () => {
     timeInterval: 5000,
     distanceInterval: 10,
     foregroundService: {
-      notificationTitle: "Ubicación en segundo plano",
-      notificationBody: "Esta app está rastreando tu ubicación en segundo plano.",
-      notificationColor: "#fff",
-    }
+      notificationTitle: 'Ubicación en segundo plano',
+      notificationBody: 'Esta app está rastreando tu ubicación en segundo plano.',
+      notificationColor: '#fff',
+    },
   });
 
   console.log('---- Inicio del rastreo de ubicación');

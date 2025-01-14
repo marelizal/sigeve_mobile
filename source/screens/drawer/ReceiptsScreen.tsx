@@ -1,11 +1,13 @@
+import TicketPrinter from '@/components/ticket-template';
 import React from 'react';
 import { View, Text } from 'react-native';
 
 const ReceiptsScreen = () => {
+
   return (
-    <View>
-      <Text>Receipts Screen</Text>
-    </View>
+    
+     <TicketPrinter  />
+
   );
 };
 
