@@ -8,6 +8,9 @@ import GlobalModal from '../Modal';
 import { Customer } from '@/models/customer';
 import { useDispatch } from 'react-redux';
 import { Colors } from '@/constants/Colors';
+import { setSelectedCustomer } from '@/redux/slices/customer.slice';
+import { SaleType, setSalesType } from '@/redux/slices/cart.slice';
+import { useNavigation } from '@react-navigation/native';
 
 
 
@@ -20,7 +23,7 @@ const ClientCard: React.FC<CustomerCardProps> = ({ client }) => {
     const { phone, address, name, days_off_week, id,lat,lng } = client;
     const [isOpen, setIsOpen] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
-
+    const navigate = useNavigation()
 
     const handleOpenModal = () => {
         setModalVisible(true);
@@ -41,6 +44,9 @@ const ClientCard: React.FC<CustomerCardProps> = ({ client }) => {
         // Lógica de confirmación
         // router.push('/(app)/(root)/(tabs)/three')
         // dispatch(selectUser(id))
+        dispatch(setSelectedCustomer(id))
+        dispatch(setSalesType(SaleType.PRESALE))
+        navigate.navigate('Productos' as never)
         handleCloseModal();
     };
 

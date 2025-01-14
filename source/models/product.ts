@@ -21,7 +21,7 @@ export interface Product {
     images:                 string[];
     active:                 boolean;
     deleted:                boolean;
-    id:                     number;
+    id:                     string;
     category:               Category;
     stock:                  number;
     price_with_tax:         number;
@@ -31,4 +31,5 @@ export interface Product {
     measurement_unit:       MeasurementUnit;
     created_at:             Date;
     updated_at:             Date;
+    isPriceDeferred: boolean
 }

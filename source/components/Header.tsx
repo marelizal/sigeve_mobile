@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   },
   clientDetails: {
     fontSize: 14,
-    color: Colors.textSelection,
+    color: 'white',
   },
   cancelButton: {
     marginLeft: 10,

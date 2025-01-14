@@ -1,24 +1,34 @@
-import ProductCard from '@/components/Cards/ProductCard';
-import Header from '@/components/Header';
-import { setSearchQuery } from '@/redux/slices/product.slice';
-import { RootState } from '@/redux/store';
 import React from 'react';
 import { View, FlatList, TextInput, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import { setSearchQuery } from '@/redux/slices/product.slice';
+import { RootState } from '@/redux/store';
+import ProductCard from '@/components/Cards/product-card';
+import Header from '@/components/Header';
+import useApplyCostWithPriceList from '@/hooks/useApllyCostWithPriceList';
+
 
 const ProductsScreen: React.FC = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const { products, searchQuery } = useSelector((state: RootState) => state.products);
   const selectedCustomerId = useSelector((state: RootState) => state.customers.selectedCustomerId);
-  const filteredProducts = products.filter(product =>
+  const customers = useSelector((state: RootState) => state.customers.customers);
+  const priceLists = useSelector((state: RootState) => state.priceList.priceLists);
+
+  // Obtener el cliente seleccionado
+  const selectedCustomer = customers.find((customer) => customer.id === selectedCustomerId) || null;
+
+  // Aplicar lista de precios al cliente seleccionado
+  const updatedProducts = useApplyCostWithPriceList(selectedCustomer, products, priceLists);
+
+  // Filtrar productos por búsqueda
+  const filteredProducts = updatedProducts.filter((product) =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <>
-      {selectedCustomerId && (
-        <Header />
-      )}
+      {selectedCustomerId && <Header />}
       <View style={styles.container}>
         <TextInput
           style={styles.searchInput}
@@ -53,4 +63,3 @@ const styles = StyleSheet.create({
 });
 
 export default ProductsScreen;
-

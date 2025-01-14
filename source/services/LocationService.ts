@@ -16,7 +16,7 @@ const getDeviceId = async (): Promise<string> => {
 const getBatteryInfo = async () => {
   const batteryLevel = await Battery.getBatteryLevelAsync();
   const chargeStatus = await Battery.getBatteryStateAsync();
-  
+
   return {
     batt: Math.floor(batteryLevel * 100),  // Convertimos el nivel de batería en porcentaje
     charge: chargeStatus === Battery.BatteryState.CHARGING,  // Verificamos si el dispositivo está cargando
@@ -34,7 +34,7 @@ const sendLocationToBackend = async (location: Location.LocationObject): Promise
 
   // Crear los parámetros conforme a la interfaz OsmAnd
   const params = {
-    deviceId:deviceId,  // ID del dispositivo
+    deviceId: deviceId,  // ID del dispositivo
     lat: location.coords.latitude,
     lon: location.coords.longitude,
     timestamp,
@@ -65,8 +65,18 @@ const sendLocationToBackend = async (location: Location.LocationObject): Promise
     // Enviar la ubicación a la API de OsmAnd usando axios
     await axios.get(fullUrl);
     alert('---- Ubicación enviada correctamente a OsmAnd');
-  } catch (error) {
-    alert('---- Error al enviar la ubicación a OsmAnd:', error);
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      // Manejar errores de Axios específicamente
+      alert(
+        `---- Error al enviar la ubicación a OsmAnd: ${error.message}\n` +
+        `Código de estado: ${error.response?.status}\n` +
+        `Respuesta del servidor: ${JSON.stringify(error.response?.data)}`
+      );
+    } else {
+      // Manejar cualquier otro tipo de error
+      alert(`---- Error desconocido: ${error}`);
+    }
   }
 };
 

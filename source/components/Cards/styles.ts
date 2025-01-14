@@ -4,14 +4,14 @@ import { StyleSheet } from 'react-native'
 
 export const styles = StyleSheet.create({
     container: {
-        borderRadius: 8,
-        backgroundColor: '#f9f9f9',
+        borderRadius:4,
+        backgroundColor: 'white',
         marginBottom: 10,
         padding: 10,
         shadowColor: '#000',
         shadowOpacity: 0.1,
         shadowRadius: 4,
-        elevation: 1,
+
     },
     header: {
         flexDirection: 'row',
@@ -30,6 +30,12 @@ export const styles = StyleSheet.create({
         fontSize: 14,
         color: '#555',
         marginTop: 15,
+
+    },
+    cost: {
+        fontSize: 14,
+        color: Colors.textSelection,
+        marginTop: 4,
 
     },
     buttonContainer: {

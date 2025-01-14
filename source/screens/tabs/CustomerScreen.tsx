@@ -3,7 +3,7 @@ import { View, Text, ActivityIndicator, FlatList, StyleSheet } from 'react-nativ
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import TabsView from '@/components/TabsView';
-import ClientCard from '@/components/Cards/Customer';
+import ClientCard from '@/components/Cards/customer-card';
 import { isAvailableForVisit } from '@/utils/isAvailableForVisit';
 import Header from '@/components/Header';
 

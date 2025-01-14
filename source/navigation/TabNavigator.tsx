@@ -7,12 +7,14 @@ import ProductsScreen from 'source/screens/tabs/ProductsScreen';
 import RoutesScreen from 'source/screens/tabs/RoutesScreen';
 import CartScreen from 'source/screens/tabs/CartScreen';
 import { Colors } from 'source/constants/Colors';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import RoadmapDetailScreen from '@/screens/drawer/RoadmapDetailScreen';
+import { RootState } from '@/redux/store';
 
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
+  const carrito = useSelector((state:RootState)=> state.cart.items)
   const navigation = useNavigation();
   const dispatch = useDispatch()
 
@@ -86,7 +88,15 @@ const TabNavigator = () => {
       <Tab.Screen name="Hojas de ruta" component={RoutesScreen} options={{ headerShown: true }} />
       <Tab.Screen name="Clientes" component={ClientsScreen} options={{ headerShown: true }} />
       <Tab.Screen name="Productos" component={ProductsScreen} options={{ headerShown: true }} />
-      {/* <Tab.Screen name="Carrito" component={CartScreen} options={{ headerShown: true }} /> */}
+      {/* Si el carrito tiene items entonces mostramos la boton */}
+      {carrito.length > 0 && <Tab.Screen name="Carrito" component={CartScreen}  options={{
+          headerShown: true,
+          tabBarBadge: carrito.length > 0 ? carrito.length : undefined, // Badge con la cantidad de items
+          tabBarBadgeStyle: {
+            backgroundColor: Colors.textSelection, // Color de fondo del badge
+            color: Colors.white, // Color del texto del badge
+          },
+        }} />}
     </Tab.Navigator>
   );
 };
