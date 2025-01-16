@@ -19,7 +19,7 @@ const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
   const selectedUserId = useSelector((state: RootState) => state.customers.selectedCustomerId);
   const user = useSelector((state: RootState) => state.auth.user);
   const { customers } = useSelector((state: RootState) => state.customers);
-  
+
   // Safe lookup for selected customer
   const selectedCustomer = customers?.find((customer) => customer.id === selectedUserId);
 

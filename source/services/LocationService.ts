@@ -64,7 +64,7 @@ const sendLocationToBackend = async (location: Location.LocationObject): Promise
   try {
     // Enviar la ubicación a la API de OsmAnd usando axios
     await axios.get(fullUrl);
-    alert('---- Ubicación enviada correctamente a OsmAnd');
+    console.log('---- Ubicación enviada correctamente a OsmAnd');
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
       // Manejar errores de Axios específicamente

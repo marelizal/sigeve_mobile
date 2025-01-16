@@ -1,28 +1,28 @@
 import CartCard from '@/components/Cards/cart-card';
 import Header from '@/components/Header';
 import { Colors } from '@/constants/Colors';
-import { Product } from '@/models/product';
+import { Order } from '@/models/order';
 import { CartItem, clearCart } from '@/redux/slices/cart.slice';
+import { selectSelectedCustomer, setSelectedCustomer } from '@/redux/slices/customer.slice';
 import { RootState } from '@/redux/store';
+import { createOrder } from '@/services/order.service';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
-
-import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View, ActivityIndicator, RootTag } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
-
-export default function CartScreeb() {
+export default function CartScreen() {
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const salesType = useSelector((state: RootState) => state.cart.salesType);
-
-  const navigation = useNavigation()
-  const dispatch = useDispatch()
-  const [paymentMethod, setPaymentMethod] = useState(''); // Estado para el método de pago
-
-  console.log(cartItems)
-
+  const paymentMethods = useSelector((state: RootState) => state.PaymentMethods.methods); // Métodos de pago desde Redux
+  const selectedCustomerId = useSelector((state: RootState)=> state.customers.selectedCustomerId)
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const [paymentMethod, setPaymentMethod] = useState(0);
   const [isEnabled, setIsEnabled] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const total = cartItems.reduce((acc, product) => {
     const price = Number(product.price_with_tax);  // Ensure price is a valid number
     const quantity = Number(product.quantity);  // Convert to number
@@ -35,14 +35,53 @@ export default function CartScreeb() {
     return acc + price * quantity;
   }, 0);
 
-  console.log(total);
+  useEffect(() => {
+    if (cartItems.length === 0) {
+      navigation.navigate('Clientes' as never);
+    }
+  }, [cartItems, navigation]);
 
+  const selectedPaymentMethod = paymentMethods.find(
+    (method) => method.id === paymentMethod
+  );
 
-  if (cartItems.length === 0) {
-    setTimeout(() => {
-      return navigation.navigate('Clientes' as never);
-    }, 3000);
-  }
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      const orderData: Order = {
+        delivery_date: new Date(),  // Fecha de entrega actual
+        discount: 0,                 // Descuento (por defecto 0)
+        customer_id: selectedCustomerId ? Number(selectedCustomerId) : 0,  // ID del cliente seleccionado
+        order_items: cartItems.map((item) => ({
+          item_id: Number(item.id),  // Asegurando que el item_id sea un número
+          quantity: item.quantity,   // Cantidad del artículo
+          price: item.price_with_tax,  // Precio con impuestos
+        })),
+        payment_method_id: selectedPaymentMethod ? selectedPaymentMethod.id : 1,  // ID del método de pago seleccionado o 1 por defecto
+        platform: 'MOBILE_APP',  // Plataforma móvil
+        signal: 0,               // Se asume que no hay señal
+        lat: 0,                  // Latitud (por ahora 0)
+        lng: 0,                  // Longitud (por ahora 0)
+        battery: 100,            // Batería (valor por defecto)
+        vendor: 1,               // ID del vendedor (por defecto 1)
+        timestamp: new Date(),   // Timestamp en formato ISO 8601
+      };
+      
+  
+      console.log(orderData);
+  
+      await createOrder(orderData); // Enviar el pedido al servidor
+      alert('Pedido creado con éxito!');
+      dispatch(clearCart()); // Limpiar el carrito después de crear el pedido
+      dispatch(setSelectedCustomer(null))
+      navigation.popTo('Clientes' as never); // Navegar después del éxito
+    } catch (err) {
+      alert('Error al crear el pedido');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   return (
     <>
@@ -64,25 +103,10 @@ export default function CartScreeb() {
           })}
         </ScrollView>
         <View style={styles.paymentInfoContainer}>
-          {/* {selectedRoadmap && visitType === 'delivery' && (
-                        <View style={styles.switchContainer}>
-                            <Text style={styles.switchLabel}>
-                                Entrega parcial
-                            </Text>
-                            <Switch
-                                trackColor={{ false: '#D9D9D9', true: '#D9D9D9' }}
-                                thumbColor={isEnabled ? '#F3764A' : '#767577'}
-                                ios_backgroundColor="#3e3e3e"
-                                onValueChange={() => { }}
-                                value={isEnabled}
-                                disabled={true}
-                            />
-                        </View>
-                    )} */}
           <Text style={styles.titlePayment}>Total a pagar</Text>
           <Text style={styles.valuePayment}>${total.toFixed(2)}</Text>
 
-          {salesType === 'presale' &&
+          {salesType === 'presale' && (
             <>
               <Text style={styles.paymentMethodLabel}>Seleccionar método de pago:</Text>
               <View style={styles.pickerContainer}>
@@ -91,21 +115,20 @@ export default function CartScreeb() {
                   onValueChange={(itemValue) => setPaymentMethod(itemValue)}
                   style={styles.picker}
                 >
-
-                  <Picker.Item label="Efectivo" value="cash" />
-                  <Picker.Item label="Tarjeta de crédito" value="credit_card" />
-                  <Picker.Item label="Transferencia bancaria" value="bank_transfer" />
+                  {paymentMethods.map((method) => (
+                    <Picker.Item key={method.id} label={method.name} value={method.id} />
+                  ))}
                 </Picker>
               </View>
             </>
+          )}
 
-          }
-
-          <TouchableOpacity style={styles.buttonPayment} onPress={() => {
-            dispatch(clearCart())
-            navigation.navigate('Ruta' as never);
-          }}>
-            <Text style={styles.buttonPaymentText}>CONTINUAR</Text>
+          <TouchableOpacity style={styles.buttonPayment} onPress={handleSubmit} disabled={loading}>
+            {loading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={styles.buttonPaymentText}>CONTINUAR</Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>
@@ -164,19 +187,21 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 16,
     color: '#333',
-  }, paymentMethodLabel: {
+  },
+  paymentMethodLabel: {
     fontSize: 16,
     fontWeight: '400',
     marginVertical: 10,
     textAlign: 'left',
-    color: Colors.textSelection
+    color: Colors.textSelection,
   },
   pickerContainer: {
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 8,
     marginBottom: 16,
-  }, picker: {
+  },
+  picker: {
     height: 50,
     width: '100%',
   },

@@ -9,7 +9,9 @@ import productReducer from './slices/product.slice';
 import priceListReducer from './slices/pricelist.slice';
 import cartReducer from './slices/cart.slice';
 import roadmapReducer from './slices/roadmap.slice';
-import logsReducer from './slices/logs.slice';
+import PaymentMethodsReducer from './slices/payment-method.featere';
+
+
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
@@ -24,7 +26,7 @@ const rootReducer = combineReducers({
   priceList: priceListReducer,
   cart: cartReducer,
   roadmap: roadmapReducer,
-  logs: logsReducer
+  PaymentMethods: PaymentMethodsReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -33,9 +35,8 @@ export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: ['persist/PERSIST'],
-      },
+      serializableCheck: false,
+      immutableCheck:false
     }),
 });
 
