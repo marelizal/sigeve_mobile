@@ -74,7 +74,7 @@ export default function CartScreen() {
       alert('Pedido creado con éxito!');
       dispatch(clearCart()); // Limpiar el carrito después de crear el pedido
       dispatch(setSelectedCustomer(null))
-      navigation.popTo('Clientes' as never); // Navegar después del éxito
+      navigation.navigate('Clientes' as never); // Navegar después del éxito
     } catch (err) {
       alert('Error al crear el pedido');
     } finally {

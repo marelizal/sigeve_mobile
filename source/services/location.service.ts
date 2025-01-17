@@ -1,8 +1,9 @@
 import * as Location from 'expo-location';
+import * as Network from 'expo-network';
 import * as TaskManager from 'expo-task-manager';
 import * as Battery from 'expo-battery';  // Para obtener el nivel de batería
-import axios from 'axios';
 import * as Application from 'expo-application';
+import { OsmAnd } from '@/models/osmand';
 
 const LOCATION_TASK_NAME = 'background-location-task';
 
@@ -23,7 +24,7 @@ const getBatteryInfo = async () => {
   };
 }
 
-// Función para enviar la ubicación a la API de OsmAnd
+// Función para enviar la ubicación a la API de OsmAnd usando fetch
 const sendLocationToBackend = async (location: Location.LocationObject): Promise<void> => {
   const deviceId = await getDeviceId(); // Obtenemos el ID del dispositivo
   const driverUniqueId = 'DRIVER123'; // Este valor debe ser dinámico dependiendo del conductor
@@ -33,18 +34,18 @@ const sendLocationToBackend = async (location: Location.LocationObject): Promise
   const { batt, charge } = await getBatteryInfo();
 
   // Crear los parámetros conforme a la interfaz OsmAnd
-  const params = {
+  const params: OsmAnd = {
     deviceId: deviceId,  // ID del dispositivo
     lat: location.coords.latitude,
     lon: location.coords.longitude,
-    timestamp,
+    timestamp: timestamp,  // Usamos el timestamp actual
     speed: location.coords.speed ?? 0,  // Usamos 0 si no hay valor de velocidad
     bearing: location.coords.heading ?? 0,  // Usamos 0 si no hay valor de dirección
     altitude: location.coords.altitude ?? 0,  // Usamos 0 si no hay valor de altitud
     accuracy: location.coords.accuracy ?? 0,  // Usamos 0 si no hay precisión
     hdop: 1.0,  //  calcular esto en función de la precisión, pero aquí lo dejamos en 1.0 por defecto
     batt,
-    charge: charge ? 'charging' : 'not charging',  // Estado de carga como 'charging' o 'not charging'
+    charge: charge ? true : false,  // Estado de carga como 'charging' o 'not charging'
     driverUniqueId,
     valid: false,  // Establecemos 'false' como valor predeterminado
     id: deviceId,  // El ID del dispositivo es igual a deviceId
@@ -56,29 +57,60 @@ const sendLocationToBackend = async (location: Location.LocationObject): Promise
   const queryParams = new URLSearchParams(params as any).toString();
   const fullUrl = `${apiUrl}?${queryParams}`;
 
-  // Imprimir la URL final con los parámetros
-  console.log('---- Enviando ubicación al backend con la URL:');
-  console.log(fullUrl);
-  console.log('----');
+  console.log('---- URL completa:', fullUrl);
 
   try {
-    // Enviar la ubicación a la API de OsmAnd usando axios
-    await axios.get(fullUrl);
-    console.log('---- Ubicación enviada correctamente a OsmAnd');
-  } catch (error: any) {
-    if (axios.isAxiosError(error)) {
-      // Manejar errores de Axios específicamente
-      alert(
-        `---- Error al enviar la ubicación a OsmAnd: ${error.message}\n` +
-        `Código de estado: ${error.response?.status}\n` +
-        `Respuesta del servidor: ${JSON.stringify(error.response?.data)}`
-      );
-    } else {
-      // Manejar cualquier otro tipo de error
-      alert(`---- Error desconocido: ${error}`);
+    // Enviar la ubicación a la API de OsmAnd usando fetch
+    const response = await fetch(fullUrl);
+    
+    if (!response.ok) {
+      throw new Error(`Error al enviar la ubicación. Código de estado: ${response.status}`);
+    }
+
+    console.log('---- Ubicación enviada correctamente');
+  } catch (error) {
+    console.error('Error al enviar la ubicación:', error);
+
+    // Si no hay conexión, guardar la URL de la petición en localStorage
+    const isOnline = await Network.getNetworkStateAsync();
+    if (!isOnline.isConnected) {
+      const storedUrls = JSON.parse(localStorage.getItem('requestUrls') || '[]');
+      storedUrls.push(fullUrl);  // Guardar la URL de la petición fallida
+      localStorage.setItem('requestUrls', JSON.stringify(storedUrls));  // Guardar en localStorage
     }
   }
 };
+
+// Función para enviar las URLs almacenadas en localStorage cuando haya conexión
+const sendStoredRequests = async () => {
+  const isOnline = await Network.getNetworkStateAsync();
+  if (isOnline.isConnected) {
+    const storedUrls = JSON.parse(localStorage.getItem('requestUrls') || '[]');
+    if (storedUrls.length > 0) {
+      for (const url of storedUrls) {
+        try {
+          const response = await fetch(url);
+          if (response.ok) {
+            console.log(`---- Petición exitosa para URL: ${url}`);
+          } else {
+            console.error(`---- Error al enviar la URL: ${url}`);
+          }
+        } catch (error) {
+          console.error('Error al ejecutar la URL almacenada:', error);
+        }
+      }
+      // Borrar las URLs almacenadas después de ejecutarlas
+      localStorage.removeItem('requestUrls');
+    }
+  }
+};
+
+// Detectar cuando se vuelve a tener conexión
+Network.addNetworkStateListener(({ isConnected }) => {
+  if (isConnected) {
+    sendStoredRequests();  // Intentamos enviar las URLs almacenadas
+  }
+});
 
 export const startLocationTracking = async () => {
   const { status: foregroundStatus } = await Location.requestForegroundPermissionsAsync();
@@ -105,7 +137,6 @@ export const startLocationTracking = async () => {
         const { locations } = data as { locations: Location.LocationObject[] };
         const location = locations[0];
         if (location) {
-          console.log('---- Ubicación en segundo plano:', location.coords);
           // Enviar ubicación a la API de OsmAnd
           await sendLocationToBackend(location);
         }

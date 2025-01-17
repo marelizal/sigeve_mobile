@@ -15,14 +15,12 @@ const useFetchData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Ejecutar todas las promesas en paralelo
-        const [customers, products, priceLists, paymentMethods] = await Promise.all([
-          getCustomers('/customers'),
-          getProducts('/products'),
-          getPriceLists('/pricelists'),
-          getPaymentMethod('/payment_methods/?page=1&size=10'),
-        ]);
-
+        // Hacer las peticiones de manera secuencial
+        const customers = await getCustomers('/customers');
+        const products = await getProducts('/products');
+        const priceLists = await getPriceLists('/pricelists');
+        const paymentMethods = await getPaymentMethod('/payment_methods/?page=1&size=10');
+        
         // Despachamos las acciones para almacenar los datos en Redux
         dispatch(setCustomers(customers));
         dispatch(setProducts(products));
