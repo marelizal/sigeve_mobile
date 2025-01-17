@@ -38,7 +38,7 @@ const sendLocationToBackend = async (location: Location.LocationObject): Promise
     deviceId: deviceId,  // ID del dispositivo
     lat: location.coords.latitude,
     lon: location.coords.longitude,
-    timestamp: timestamp,  // Usamos el timestamp actual
+    timestamp: '2025-01-17T15:30:00Z',  // Usamos el timestamp actual
     speed: location.coords.speed ?? 0,  // Usamos 0 si no hay valor de velocidad
     bearing: location.coords.heading ?? 0,  // Usamos 0 si no hay valor de dirección
     altitude: location.coords.altitude ?? 0,  // Usamos 0 si no hay valor de altitud

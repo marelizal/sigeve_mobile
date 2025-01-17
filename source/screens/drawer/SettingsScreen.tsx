@@ -6,7 +6,7 @@ import { Colors } from '@/constants/Colors';
 const SettingsScreen = () => {
   const [deviceId, setDeviceId] = useState('');
   const [fcmToken, setFcmToken] = useState('');
-  const [serverUrl, setServerUrl] = useState('');
+  const [serverUrl, setServerUrl] = useState('http://demo4.traccar.org:5055');
 
   function handleUrlChange(text: string): void {
     throw new Error('Function not implemented.');
@@ -44,7 +44,7 @@ const getDeviceId = async (): Promise<string> => {
           style={styles.input}
           value={serverUrl}
           onChangeText={handleUrlChange}
-          placeholder="https://example.com"
+          placeholder="http://demo4.traccar.org:5055"
           autoCapitalize="none"
           autoCorrect={false}
         />
