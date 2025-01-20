@@ -23,4 +23,6 @@ export interface Customer {
     deleted:               boolean;
     created_at:            Date;
     updated_at:            Date;
+    current_balance: number,
+    account_limit: number,
 }

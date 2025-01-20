@@ -11,6 +11,7 @@ import { Colors } from 'source/constants/Colors';
 import { useDispatch } from 'react-redux';
 import StockScreen from '@/screens/drawer/StockScreen';
 import RoadmapDetailScreen from '@/screens/drawer/RoadmapDetailScreen';
+import SuccessComponent from '@/screens/drawer/succesFully';
 
 const Drawer = createDrawerNavigator();
 
@@ -101,6 +102,16 @@ const MainNavigator = () => {
         options={{
           ...screenOptions,
           drawerItemStyle: { display: 'none' }, 
+        }}
+      />
+
+<Drawer.Screen
+        name="SuccessSale"
+        component={SuccessComponent}
+        options={{
+          ...screenOptions,
+          drawerItemStyle: { display: 'none' }, 
+          headerShown:false
         }}
       />
     </Drawer.Navigator>

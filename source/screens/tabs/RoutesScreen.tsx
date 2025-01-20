@@ -8,7 +8,8 @@ import axios from 'axios';
 import { Roadmap } from '@/models/roadmap';
 import { Colors } from '@/constants/Colors';
 import SlideToStart from '@/components/SlideToStart';
-import SwipeButton from '@arelstone/react-native-swipe-button';
+
+
 
 
 const RoadmapsScreen: React.FC = () => {

@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, FlatList, StyleSheet } from 'react-native';
+import { View, Text, ActivityIndicator, FlatList, StyleSheet, TextInput } from 'react-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import TabsView from '@/components/TabsView';
 import ClientCard from '@/components/Cards/customer-card';
 import { isAvailableForVisit } from '@/utils/isAvailableForVisit';
 import Header from '@/components/Header';
+import { Colors } from '@/constants/Colors';
+import { Ionicons } from '@expo/vector-icons';
 
 
 
@@ -40,7 +42,7 @@ const CustomersScreen: React.FC = () => {
   }, [searchQuery, customers]);
 
   const renderScene = {
- 
+
     customers: () => (
       <View style={{ padding: 10 }}>
         {loading ? (
@@ -64,6 +66,7 @@ const CustomersScreen: React.FC = () => {
     ),
     today: () => (
       <View style={{ padding: 10 }}>
+  
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : availableForVisit.length === 0 ? (
@@ -84,18 +87,18 @@ const CustomersScreen: React.FC = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      {/* <View style={styles.searchContainer}>
-        <Ionicons name="search" size={20} color={Colors.textSelection} style={styles.searchIcon} />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Buscar clientes..."
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-      </View> */}
-        {selectedCustomerId && (
-              <Header />
-            )}
+      <View style={styles.searchContainer}>
+          <Ionicons name="search" size={20} color={Colors.textSelection} style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Buscar clientes..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
+      {selectedCustomerId && (
+        <Header />
+      )}
       <TabsView routes={routes} renderScene={renderScene} />
     </View>
   );
