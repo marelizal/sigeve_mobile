@@ -9,8 +9,9 @@ import { createOrder } from '@/services/order.service';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import React, { useState, useEffect } from 'react';
-import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View, ActivityIndicator, RootTag } from 'react-native';
+import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View, ActivityIndicator, RootTag, Alert } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import * as Location from 'expo-location';
 
 export default function CartScreen() {
   const cartItems = useSelector((state: RootState) => state.cart.items);
@@ -22,6 +23,9 @@ export default function CartScreen() {
   const [paymentMethod, setPaymentMethod] = useState(0);
   const [isEnabled, setIsEnabled] = useState(false);
   const [loading, setLoading] = useState(false);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const [location, setLocation] = useState({ latitude: 0, longitude: 0 });
+
 
   const total = cartItems.reduce((acc, product) => {
     const price = Number(product.price_with_tax);  // Ensure price is a valid number
@@ -40,6 +44,36 @@ export default function CartScreen() {
       navigation.navigate('Clientes' as never);
     }
   }, [cartItems, navigation]);
+
+
+  useEffect(() => {
+    const getLocation = async () => {
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert('Permiso denegado', 'No se pudo obtener la ubicación.');
+          return;
+        }
+
+        const currentLocation = await Location.getCurrentPositionAsync({});
+        setLocation({
+          latitude: currentLocation.coords.latitude,
+          longitude: currentLocation.coords.longitude,
+        });
+
+        console.log({  latitude: currentLocation.coords.latitude,
+          longitude: currentLocation.coords.longitude,})
+      } catch (error) {
+        Alert.alert('Error', 'Hubo un problema al obtener la ubicación.');
+      }
+    };
+
+    getLocation();
+  }, [location]);
+
+
+
+
 
   const selectedPaymentMethod = paymentMethods.find(
     (method) => method.id === paymentMethod
@@ -60,10 +94,10 @@ export default function CartScreen() {
         payment_method_id: selectedPaymentMethod ? selectedPaymentMethod.id : 1,  // ID del método de pago seleccionado o 1 por defecto
         platform: 'MOBILE_APP',  // Plataforma móvil
         signal: 0,               // Se asume que no hay señal
-        lat: 0,                  // Latitud (por ahora 0)
-        lng: 0,                  // Longitud (por ahora 0)
+        lat: location.latitude,                  // Latitud (por ahora 0)
+        lng: location.longitude,                  // Longitud (por ahora 0)
         battery: 100,            // Batería (valor por defecto)
-        vendor: 1,               // ID del vendedor (por defecto 1)
+        vendor: user?.id ? Number(user.id) : 1,               // ID del vendedor (por defecto 1)
         timestamp: new Date(),   // Timestamp en formato ISO 8601
       };
       

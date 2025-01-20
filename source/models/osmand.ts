@@ -13,4 +13,5 @@ export interface OsmAnd {
   driverUniqueId: string;
   valid: boolean;
   id: string;
+
 }

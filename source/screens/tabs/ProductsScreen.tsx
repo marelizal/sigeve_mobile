@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, FlatList, TextInput, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSearchQuery } from '@/redux/slices/product.slice';
+import { setProducts, setSearchQuery } from '@/redux/slices/product.slice';
 import { RootState } from '@/redux/store';
 import ProductCard from '@/components/Cards/product-card';
 import Header from '@/components/Header';
 import useApplyCostWithPriceList from '@/hooks/useApllyCostWithPriceList';
+import { getProducts } from '@/services/product.service';
 
 
 const ProductsScreen: React.FC = () => {
@@ -25,6 +26,16 @@ const ProductsScreen: React.FC = () => {
   const filteredProducts = updatedProducts.filter((product) =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+ 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const products = await getProducts('/products');
+      dispatch( setProducts(products))
+    };
+    fetchProducts();
+  }, [])
+  
 
   return (
     <>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, FlatList, StyleSheet, TextInput } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import TabsView from '@/components/TabsView';
 import ClientCard from '@/components/Cards/customer-card';
@@ -8,6 +8,8 @@ import { isAvailableForVisit } from '@/utils/isAvailableForVisit';
 import Header from '@/components/Header';
 import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
+import { getCustomers } from '@/services/customer.service';
+import { setCustomers } from '@/redux/slices/customer.slice';
 
 
 
@@ -15,7 +17,7 @@ const CustomersScreen: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [filteredCustomers, setFilteredCustomers] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
-
+  const dispatch = useDispatch()
   // Obtén los clientes desde el estado de Redux
   const { customers } = useSelector((state: RootState) => state.customers);
   const availableForVisit = customers.filter(client => isAvailableForVisit(client.days_off_week));
@@ -24,6 +26,16 @@ const CustomersScreen: React.FC = () => {
     { key: 'customers', title: 'Todos' },
     { key: 'today', title: 'Visitar hoy' },
   ];
+
+    useEffect(() => {
+      const fetchCustomer = async () => {
+        const customers = await getCustomers('/customers');
+        dispatch( setCustomers(customers))
+        setLoading(false)
+      };
+      fetchCustomer();
+    }, [])
+    
 
   useEffect(() => {
     // Cuando los clientes están disponibles, actualizamos el estado de carga y los clientes filtrados
